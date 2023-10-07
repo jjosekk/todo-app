@@ -9,12 +9,9 @@ import './app.css'
 export default class App extends Component {
   maxId = 100;
 
-
-
-
-
-
   state = {
+
+
     todoData: [
       { text: 'Completed task', id: 1, done: true, editing: false, date: new Date('2022-05-25') },
       { text: 'Editing task', id: 2, done: false, editing: false, date: new Date('1970-07-25') },
@@ -22,7 +19,7 @@ export default class App extends Component {
     ],
 
     filter: 'All',
-  };
+  }
 
   todoFilter(status) {
     this.setState({ filter: status })
