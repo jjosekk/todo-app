@@ -26,7 +26,7 @@
     "pre-commit": "lint-staged"
   },
   "lint-staged": {
-    "src/*.js": [
+    "*.js": [
       "npm run lint",
       "npm run lint:fix",
       "npm run format"
