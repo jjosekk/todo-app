@@ -7,7 +7,11 @@ import TaskList from '../task-list/task-list'
 import './app.css'
 
 export default class App extends Component {
-  maxId = 100
+  maxId = 100;
+
+
+
+  
 
   state = {
     todoData: [
