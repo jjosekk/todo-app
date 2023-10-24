@@ -7,7 +7,7 @@ import './task-list.css'
 
 export default class TaskList extends Component {
   render() {
-    const { changeCheck, deleteItem, todos, filter, editItem, changeEditing } = this.props
+    const { changeCheck, deleteItem, todos, filter, editItem, changeEditing, onTimerUpdate } = this.props
 
     const filterArr = todos.filter((el) => {
       if (filter === 'Active') {
@@ -29,6 +29,7 @@ export default class TaskList extends Component {
             deleteItem={() => deleteItem(item.id)}
             editItem={editItem}
             changeEditing={changeEditing}
+            onTimerUpdate={onTimerUpdate}
           />
         ))}
       </ul>

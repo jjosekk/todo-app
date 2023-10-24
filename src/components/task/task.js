@@ -7,6 +7,10 @@ export default class Task extends Component {
     value: this.props.item.text,
   }
 
+  componentDidUpdate() {
+    if (this.props.item.timer === 0 || this.props.item.done) clearInterval(this.props.item.timerId)
+  }
+
   onInputChange = (e) => {
     this.setState({
       value: e.target.value,
@@ -19,8 +23,8 @@ export default class Task extends Component {
   }
 
   render() {
-    const { changeCheck, deleteItem, item, changeEditing } = this.props
-    const { text, done, id, date, editing } = item
+    const { changeCheck, deleteItem, item, changeEditing, onTimerUpdate } = this.props
+    const { text, done, id, date, editing, timer, timerId } = item
 
     return (
       <li className={done ? 'completed' : editing ? 'editing' : null}>
@@ -33,8 +37,25 @@ export default class Task extends Component {
             checked={done}
           />
           <label htmlFor={id}>
-            <span className="description">{text}</span>
-            <span className="created">{`created ${formatDistanceToNow(date, {
+            <span className="title">{text}</span>
+            <span className="description">
+              <button
+                className="icon icon-play"
+                onClick={() => {
+                  if (timer > 0 && !done) {
+                    item.timerId = setInterval(() => onTimerUpdate(id), 1000)
+                  }
+                }}
+              ></button>
+              <button
+                className="icon icon-pause"
+                onClick={() => {
+                  clearInterval(timerId)
+                }}
+              ></button>
+              {`${Math.floor(timer / 60)}:${timer % 60}`}
+            </span>
+            <span className="description">{`created ${formatDistanceToNow(date, {
               addSuffix: true,
               includeSeconds: true,
             })}`}</span>

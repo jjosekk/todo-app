@@ -7,16 +7,10 @@ import TaskList from '../task-list/task-list'
 import './app.css'
 
 export default class App extends Component {
-  maxId = 100;
+  maxId = 100
 
   state = {
-
-
-    todoData: [
-      { text: 'Completed task', id: 1, done: true, editing: false, date: new Date('2022-05-25') },
-      { text: 'Editing task', id: 2, done: false, editing: false, date: new Date('1970-07-25') },
-      { text: 'Active task', id: 3, done: false, editing: false, date: new Date('2023-10-05') },
-    ],
+    todoData: [],
 
     filter: 'All',
   }
@@ -58,13 +52,15 @@ export default class App extends Component {
     }
   }
 
-  addItem = (text) => {
+  addItem = (text, min, sec) => {
     const newItem = {
       text: text,
       done: false,
       editing: false,
       id: this.maxId++,
       date: new Date(),
+      timer: min * 60 + sec,
+      timerId: null,
     }
 
     this.setState(({ todoData }) => ({ todoData: [...todoData, newItem] }))
@@ -73,6 +69,10 @@ export default class App extends Component {
   deleteItem = (id) => {
     this.setState(({ todoData }) => {
       const index = todoData.findIndex((el) => el.id === id)
+
+      if (todoData[index].timerId) {
+        clearInterval(todoData[index].timerId)
+      }
 
       return {
         todoData: [...todoData.slice(0, index), ...todoData.slice(index + 1)],
@@ -85,15 +85,30 @@ export default class App extends Component {
       const index = todoData.findIndex((el) => el.id === id)
 
       const editItem = {
+        ...todoData[index],
         text: text,
-        done: false,
         editing: false,
-        id: id,
-        date: todoData[index].date,
       }
 
       return {
         todoData: [...todoData.slice(0, index), editItem, ...todoData.slice(index + 1)],
+      }
+    })
+  }
+
+  onTimerUpdate = (id) => {
+    this.setState(({ todoData }) => {
+      const index = todoData.findIndex((el) => el.id === id)
+
+      const { timer } = todoData[index]
+
+      const newItem = {
+        ...todoData[index],
+        timer: timer - 1,
+      }
+
+      return {
+        todoData: [...todoData.slice(0, index), newItem, ...todoData.slice(index + 1)],
       }
     })
   }
@@ -114,6 +129,7 @@ export default class App extends Component {
             deleteItem={this.deleteItem}
             editItem={this.editItem}
             changeEditing={this.changeEditing}
+            onTimerUpdate={this.onTimerUpdate}
           />
           <Footer
             todos={this.state.todoData}
