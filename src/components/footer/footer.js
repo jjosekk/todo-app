@@ -6,13 +6,12 @@ import TaskFilter from '../task-filter/task-filter'
 import './footer.css'
 
 const Footer = (props) => {
-  const { todos, filter, todoFilter, clearCompleted } = props
-  const todoCount = todos.filter((el) => !el.done).length
+  const { todos, filterStatus, setFIlterStatus, clearCompleted } = props
 
   return (
     <footer className="footer">
-      <span className="todo-count">{todoCount} items left</span>
-      <TaskFilter filter={filter} todoFilter={todoFilter} />
+      <span className="todo-count">{todos.filter((el) => !el.done).length} items left</span>
+      <TaskFilter filterStatus={filterStatus} setFIlterStatus={setFIlterStatus} />
       <button className="clear-completed" onClick={clearCompleted}>
         Clear completed
       </button>
@@ -22,15 +21,15 @@ const Footer = (props) => {
 
 Footer.defaultProps = {
   todos: [],
-  filter: 'All',
-  todoFilter: () => {},
+  filterStatus: 'All',
+  setFIlterStatus: () => {},
   clearCompleted: () => {},
 }
 
 Footer.propTypes = {
   todos: PropTypes.arrayOf(PropTypes.object),
-  filter: PropTypes.string,
-  todoFilter: PropTypes.func,
+  filterStatus: PropTypes.string,
+  setFIlterStatus: PropTypes.func,
   clearCompleted: PropTypes.func,
 }
 

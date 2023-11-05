@@ -1,144 +1,119 @@
-import React, { Component } from 'react'
+import React, { useState } from 'react'
 
-import Footer from '../footer/footer'
 import NewTaskForm from '../new-task-form/new-task-form'
 import TaskList from '../task-list/task-list'
+import Footer from '../footer/footer'
 
 import './app.css'
 
-export default class App extends Component {
-  maxId = 100
+const App = () => {
+  const [data, setData] = useState([])
+  const [taskId, setTaskId] = useState(1)
+  const [filter, setFilter] = useState('All')
 
-  state = {
-    todoData: [],
+  const onTimerUpdate = (id) => {
+    setData((data) => {
+      const index = data.findIndex((el) => el.id === id)
 
-    filter: 'All',
+      const { timer } = data[index]
+
+      const newItem = {
+        ...data[index],
+        timer: timer - 1,
+      }
+
+      return [...data.slice(0, index), newItem, ...data.slice(index + 1)]
+    })
   }
 
-  todoFilter(status) {
-    this.setState({ filter: status })
+  const setFIlterStatus = (status) => {
+    setFilter(status)
   }
 
-  changeCheck(index, data) {
-    this.setState(({ todoData }) =>
-      todoData.map((el) => {
-        if (index === el.id) {
-          el.done = data
-        }
-        return el
-      })
-    )
+  const clearCompleted = () => {
+    setData(data.filter((el) => !el.done))
   }
 
-  clearCompleted = () => {
-    this.setState(({ todoData }) => ({ todoData: todoData.filter((el) => !el.done) }))
-  }
-
-  changeEditing = (id) => {
-    const index = this.state.todoData.findIndex((el) => el.id === id)
-
-    if (!this.state.todoData[index].done) {
-      this.setState(({ todoData }) => {
-        todoData.map((el) => (el.editing = false))
-        const editItem = {
-          ...todoData[index],
-          editing: true,
-        }
-
-        return {
-          todoData: [...todoData.slice(0, index), editItem, ...todoData.slice(index + 1)],
-        }
-      })
-    }
-  }
-
-  addItem = (text, min, sec) => {
+  const addItem = (text, min, sec) => {
     const newItem = {
       text: text,
       done: false,
       editing: false,
-      id: this.maxId++,
+      id: taskId,
       date: new Date(),
       timer: min * 60 + sec,
       timerId: null,
     }
 
-    this.setState(({ todoData }) => ({ todoData: [...todoData, newItem] }))
+    setData([...data, newItem])
+    setTaskId(taskId + 1)
   }
 
-  deleteItem = (id) => {
-    this.setState(({ todoData }) => {
-      const index = todoData.findIndex((el) => el.id === id)
+  const deleteItem = (id) => {
+    const index = data.findIndex((el) => el.id === id)
 
-      if (todoData[index].timerId) {
-        clearInterval(todoData[index].timerId)
-      }
+    if (data[index].timerId) clearInterval(data[index].timerId)
 
-      return {
-        todoData: [...todoData.slice(0, index), ...todoData.slice(index + 1)],
-      }
-    })
+    setData([...data.slice(0, index), ...data.slice(index + 1)])
   }
 
-  editItem = (text, id) => {
-    this.setState(({ todoData }) => {
-      const index = todoData.findIndex((el) => el.id === id)
+  const setCompletedStatus = (id) => {
+    const index = data.findIndex((el) => el.id === id)
+    const completed = !data[index].done
 
-      const editItem = {
-        ...todoData[index],
-        text: text,
-        editing: false,
-      }
-
-      return {
-        todoData: [...todoData.slice(0, index), editItem, ...todoData.slice(index + 1)],
-      }
-    })
+    const newItem = {
+      ...data[index],
+      done: completed,
+    }
+    setData([...data.slice(0, index), newItem, ...data.slice(index + 1)])
   }
 
-  onTimerUpdate = (id) => {
-    this.setState(({ todoData }) => {
-      const index = todoData.findIndex((el) => el.id === id)
+  const handleEdit = (id) => {
+    const index = data.findIndex((el) => el.id === id)
 
-      const { timer } = todoData[index]
-
+    if (!data[index].done) {
       const newItem = {
-        ...todoData[index],
-        timer: timer - 1,
+        ...data[index],
+        editing: true,
       }
 
-      return {
-        todoData: [...todoData.slice(0, index), newItem, ...todoData.slice(index + 1)],
-      }
-    })
+      setData([...data.slice(0, index), newItem, ...data.slice(index + 1)])
+    }
   }
 
-  render() {
-    return (
-      <section className="todoapp">
-        <header className="header">
-          <h1>todos</h1>
-          <NewTaskForm addItem={this.addItem} />
-        </header>
+  const editItem = (text, id) => {
+    const index = data.findIndex((el) => el.id === id)
 
-        <section className="main">
-          <TaskList
-            todos={this.state.todoData}
-            filter={this.state.filter}
-            changeCheck={this.changeCheck.bind(this)}
-            deleteItem={this.deleteItem}
-            editItem={this.editItem}
-            changeEditing={this.changeEditing}
-            onTimerUpdate={this.onTimerUpdate}
-          />
-          <Footer
-            todos={this.state.todoData}
-            filter={this.state.filter}
-            todoFilter={this.todoFilter.bind(this)}
-            clearCompleted={this.clearCompleted}
-          />
-        </section>
+    const newItem = {
+      ...data[index],
+      text: text,
+      editing: false,
+    }
+
+    setData([...data.slice(0, index), newItem, ...data.slice(index + 1)])
+  }
+
+  return (
+    <section className="todoapp">
+      <header className="header">
+        <h1>todos</h1>
+        <NewTaskForm addItem={addItem} />
+      </header>
+
+      <section className="main">
+        <TaskList
+          todos={data}
+          filterStatus={filter}
+          setCompletedStatus={setCompletedStatus}
+          deleteItem={deleteItem}
+          editItem={editItem}
+          handleEdit={handleEdit}
+          onTimerUpdate={onTimerUpdate}
+        />
+        <Footer todos={data} filterStatus={filter} setFIlterStatus={setFIlterStatus} clearCompleted={clearCompleted} />
       </section>
-    )
-  }
+    </section>
+  )
 }
+
+export default App

@@ -1,47 +1,52 @@
-import React, { Component } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 
 import './task-filter.css'
 
-export default class TaskFilter extends Component {
-  render() {
-    const { filter, todoFilter } = this.props
-    return (
-      <ul className="filters">
-        <li>
-          <button type="button" className={filter === 'All' ? 'selected' : null} onClick={() => todoFilter('All')}>
-            All
-          </button>
-        </li>
-        <li>
-          <button
-            type="button"
-            className={filter === 'Active' ? 'selected' : null}
-            onClick={() => todoFilter('Active')}
-          >
-            Active
-          </button>
-        </li>
-        <li>
-          <button
-            type="button"
-            className={filter === 'Completed' ? 'selected' : null}
-            onClick={() => todoFilter('Completed')}
-          >
-            Completed
-          </button>
-        </li>
-      </ul>
-    )
-  }
+const TaskFilter = (props) => {
+  const { filterStatus, setFIlterStatus } = props
+
+  return (
+    <ul className="filters">
+      <li>
+        <button
+          type="button"
+          className={filterStatus === 'All' ? 'selected' : null}
+          onClick={() => setFIlterStatus('All')}
+        >
+          All
+        </button>
+      </li>
+      <li>
+        <button
+          type="button"
+          className={filterStatus === 'Active' ? 'selected' : null}
+          onClick={() => setFIlterStatus('Active')}
+        >
+          Active
+        </button>
+      </li>
+      <li>
+        <button
+          type="button"
+          className={filterStatus === 'Completed' ? 'selected' : null}
+          onClick={() => setFIlterStatus('Completed')}
+        >
+          Completed
+        </button>
+      </li>
+    </ul>
+  )
 }
 
+export default TaskFilter
+
 TaskFilter.defaultProps = {
-  filter: 'All',
-  todoFilter: () => {},
+  filterStatus: 'All',
+  setFIlterStatus: () => {},
 }
 
 TaskFilter.propTypes = {
-  filter: PropTypes.string,
-  todoFilter: PropTypes.func,
+  filterStatus: PropTypes.string,
+  setFIlterStatus: PropTypes.func,
 }

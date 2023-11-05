@@ -1,25 +1,21 @@
-import React, { Component } from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 
 import './new-task-form.css'
 
-export default class NewTaskForm extends Component {
-  state = {
+const NewTaskForm = (props) => {
+  const [inputValue, setInputValue] = useState({
     text: '',
     min: '',
     sec: '',
-  }
+  })
 
-  onLabelChange = (e) => {
-    this.setState({
-      text: e.target.value,
-    })
-  }
+  const { addItem } = props
 
-  onSubmit = (e) => {
+  const onSubmit = (e) => {
     e.preventDefault()
-    this.props.addItem(this.state.text, Number(this.state.min), Number(this.state.sec))
-    this.setState({
+    addItem(inputValue.text, Number(inputValue.min), Number(inputValue.sec))
+    setInputValue({
       text: '',
       min: '',
       sec: '',
@@ -27,40 +23,40 @@ export default class NewTaskForm extends Component {
     e.target.reset()
   }
 
-  render() {
-    return (
-      <form className="new-todo-form" onSubmit={this.onSubmit}>
-        <input
-          className="new-todo"
-          placeholder="What needs to be done?"
-          autoFocus
-          onChange={this.onLabelChange}
-          value={this.state.text}
-          required
-        />
-        <input
-          className="new-todo-form__timer"
-          placeholder="Min"
-          type="number"
-          min="0"
-          max="59"
-          onChange={(e) => this.setState({ min: e.target.value })}
-          value={this.state.min}
-        />
-        <input
-          className="new-todo-form__timer"
-          placeholder="Sec"
-          type="number"
-          min="0"
-          max="59"
-          onChange={(e) => this.setState({ sec: e.target.value })}
-          value={this.state.sec}
-        />
-        <button type="submit" />
-      </form>
-    )
-  }
+  return (
+    <form className="new-todo-form" onSubmit={onSubmit}>
+      <input
+        className="new-todo"
+        placeholder="What needs to be done?"
+        autoFocus
+        onChange={(e) => setInputValue({ ...inputValue, text: e.target.value })}
+        value={inputValue.text}
+        required
+      />
+      <input
+        className="new-todo-form__timer"
+        placeholder="Min"
+        type="number"
+        min="0"
+        max="59"
+        onChange={(e) => setInputValue({ ...inputValue, min: e.target.value })}
+        value={inputValue.min}
+      />
+      <input
+        className="new-todo-form__timer"
+        placeholder="Sec"
+        type="number"
+        min="0"
+        max="59"
+        onChange={(e) => setInputValue({ ...inputValue, sec: e.target.value })}
+        value={inputValue.sec}
+      />
+      <button type="submit" />
+    </form>
+  )
 }
+
+export default NewTaskForm
 
 NewTaskForm.defaultProps = {
   addItem: () => {},

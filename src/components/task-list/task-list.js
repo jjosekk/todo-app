@@ -1,56 +1,56 @@
-import React, { Component } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 
 import Task from '../task/task'
 
 import './task-list.css'
 
-export default class TaskList extends Component {
-  render() {
-    const { changeCheck, deleteItem, todos, filter, editItem, changeEditing, onTimerUpdate } = this.props
+const TaskList = (props) => {
+  const { deleteItem, todos, filterStatus, setCompletedStatus, onTimerUpdate, handleEdit, editItem } = props
 
-    const filterArr = todos.filter((el) => {
-      if (filter === 'Active') {
-        return !el.done
-      }
-      if (filter === 'Completed') {
-        return el.done
-      }
-      return el
-    })
+  const filterArr = todos.filter((el) => {
+    if (filterStatus === 'Active') {
+      return !el.done
+    }
+    if (filterStatus === 'Completed') {
+      return el.done
+    }
+    return el
+  })
 
-    return (
-      <ul className="todo-list">
-        {filterArr.map((item) => (
-          <Task
-            key={item.id}
-            item={item}
-            changeCheck={changeCheck}
-            deleteItem={() => deleteItem(item.id)}
-            editItem={editItem}
-            changeEditing={changeEditing}
-            onTimerUpdate={onTimerUpdate}
-          />
-        ))}
-      </ul>
-    )
-  }
+  return (
+    <ul className="todo-list">
+      {filterArr.map((item) => (
+        <Task
+          key={item.id}
+          item={item}
+          deleteItem={() => deleteItem(item.id)}
+          handleEdit={() => handleEdit(item.id)}
+          editItem={editItem}
+          setCompletedStatus={setCompletedStatus}
+          onTimerUpdate={onTimerUpdate}
+        />
+      ))}
+    </ul>
+  )
 }
 
+export default TaskList
+
 TaskList.defaultProps = {
-  changeCheck: () => {},
+  setCompletedStatus: () => {},
   deleteItem: () => {},
   editItem: () => {},
-  changeEditing: () => {},
+  handleEdit: () => {},
   todos: [],
-  filter: 'All',
+  filterStatus: 'All',
 }
 
 TaskList.propTypes = {
-  changeCheck: PropTypes.func,
+  setCompletedStatus: PropTypes.func,
   deleteItem: PropTypes.func,
   editItem: PropTypes.func,
-  changeEditing: PropTypes.func,
+  handleEdit: PropTypes.func,
   todos: PropTypes.arrayOf(PropTypes.object),
-  filter: PropTypes.string,
+  filterStatus: PropTypes.string,
 }
